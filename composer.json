@@ -1,0 +1,14 @@
+{
+    "name": "rtgroup/dev_router",
+    "autoload": {
+        "psr-4": {
+            "Rtgroup\\DevRouter\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gaston Delimond Dev"
+        }
+    ],
+    "require": {}
+}
