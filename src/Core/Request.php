@@ -18,7 +18,7 @@ class Request
      */
     public function __construct() {
         $requestMethod = mb_strtoupper(( $_SERVER['REQUEST_METHOD'] ?? "" ));
-        if ( isset($_SERVER['REQUEST_METHOD']) && in_array($requestMethod, [ Routes::PATCH, Routes::PUT ]) ) {
+        if ( isset($_SERVER['REQUEST_METHOD']) && in_array($requestMethod, [ Router::PATCH, Router::PUT ]) ) {
             $input = $this->parse_patch_and_put_request_data();
         } else {
             $rawInput = file_get_contents('php://input');

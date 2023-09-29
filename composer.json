@@ -2,7 +2,9 @@
     "name": "rtgroup/dev_router",
     "autoload": {
         "psr-4": {
-            "Rtgroup\\DevRouter\\": "src/"
+            "Rtgroup\\DevRouter\\": "src/",
+            "Rtgroup\\DevRouter\\Exceptions\\" : "./src/Exceptions",
+            "Rtgroup\\DevRouter\\Interfaces\\" : "./src/Interfaces"
         }
     },
     "authors": [
@@ -10,5 +12,21 @@
             "name": "Gaston Delimond Dev"
         }
     ],
-    "require": {}
+
+    "require-dev" : {
+        "pestphp/pest" : "^1.21"
+    },
+    "config" : {
+        "sort-packages" : true,
+        "allow-plugins" : {
+            "pestphp/pest-plugin" : true
+        },
+        "optimize-autoloader" : true,
+        "preferred-install" : "dist"
+    },
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "3.x-dev"
+        }
+    }
 }

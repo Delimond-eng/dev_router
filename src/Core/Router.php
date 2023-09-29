@@ -2,7 +2,6 @@
 
 namespace Rtgroup\DevRouter\Core;
 
-
 use Closure;
 use ReflectionException;
 use ReflectionFunction;
@@ -16,37 +15,37 @@ use Rtgroup\DevRouter\Interfaces\IContainer;
 class Router
 {
     /**
-     * @var string GET Constant representing a GET request method
+     * @var string GET Constante représentant une méthode de requête GET
      */
     public const GET = 'GET';
 
     /**
-     * @var string POST Constant representing a POST request method
+     * @var string POST Constante représentant une méthode de requête POST
      */
     public const POST = 'POST';
 
     /**
-     * @var string PUT Constant representing a PUT request method
+     * @var string PUT Constante représentant une méthode de requête PUT
      */
     public const PUT = 'PUT';
 
     /**
-     * @var string PATCH Constant representing a PATCH request method
+     * @var string PATCH  Constante représentant une méthode de requête PATCH
      */
     public const PATCH = 'PATCH';
 
     /**
-     * @var string DELETE Constant representing a DELETE request method
+     * @var string DELETE Constante représentant une méthode de requête DELETE
      */
     public const DELETE = 'DELETE';
 
     /**
-     * @var string OPTIONS Constant representing a OPTIONS request method
+     * @var string OPTIONS Constante représentant une méthode de requête OPTIONS
      */
     public const OPTIONS = 'OPTIONS';
 
     /**
-     * @var Request $request Instance of a Request class to be passed as an argument to routes callback
+     * @var Request $request Instance d'une classe Request à passer en argument au rappel des routes($callback)
      */
     public Request $request;
     /**
@@ -54,30 +53,30 @@ class Router
      */
     private string $prefix = '';
     /**
-     * @var array $middlewares List of middlewares to be executed before the routes
+     * @var array $middlewares Liste des middlewares à exécuter avant l'appel des routes
      */
     private array $middlewares = [];
     /**
-     * @var array $routes List of available routes
+     * @var array $routes Liste des routes disponibles
      */
     private array $routes = [];
     /**
-     * @var array $routes Temporary holder of route information until it all gets stored in the primary $routes array
+     * @var array $routes Détenteur temporaire des informations d'itinéraire jusqu'à ce que tout soit stocké dans le tableau $routes principal
      */
     private array $tmpRoutes = [];
 
     /**
-     * @var array|null Array of the current route being processed for eas of access in other methods
+     * @var array|null Tableau de $routes actuel en cours de traitement pour faciliter l'accès dans d'autres méthodes
      */
     private ?array $currentRoute = NULL;
 
     /**
-     * @var Response Instance of a Response class to be passed as an argument to routes callback
+     * @var Response Instance d'une classe Response à passer en argument à $routes $callback
      */
     private Response $response;
 
     /**
-     * Routes constructor
+     * Router constructor
      */
     public function __construct()
     {
@@ -86,7 +85,7 @@ class Router
     }
 
     /**
-     * Method used for adding new routes
+     * Méthode utilisée pour ajouter une $route
      *
      * @param string $path Path for the route
      * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
@@ -102,13 +101,13 @@ class Router
     }
 
     /**
-     * Method used for adding new routes into the temporary list when using chained method approach
+     * Méthode utilisée pour ajouter de nouveaux $routes dans la liste temporaire lors de l'utilisation d'une approche de méthode chaînée
      *
      * @param string $path Path for the route
      * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
      * @param string|array $methods Allowed request method(s) (GET, POST, PUT, PATCH, DELETE)
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function route(
         string                     $path,
@@ -150,11 +149,12 @@ class Router
     }
 
     /**
-     * Method used for saving routing information into the global $routes array
+     * Méthode utilisée pour enregistrer les informations de routage dans le tableau global $routes
      *
-     * @param bool $cleanData should the data from the tmpRoutes be cleared or not when this method runs
+     * @param bool $cleanData les données des tmpRoutes doivent-elles être effacées ou non lors de l'exécution de cette méthode. Par defaut c'est TRUE
      */
     public function save(bool $cleanData = true) : self {
+
         foreach ( $this->tmpRoutes as $method => $route ) {
             if ( !isset($this->routes[$method]) ) $this->routes[$method] = [];
             $path = array_key_first($route);
@@ -186,16 +186,19 @@ class Router
         }
 
         $this->tmpRoutes = [];
+
+
         return $this;
     }
 
     /**
-     * Method used to handle execution of routes and middlewares
+     * Méthode utilisée pour gérer l'exécution des routes et des middlewares
      *
-     * @throws RouteNotFoundException When the route was not found
-     * @throws CallbackNotFound When the callback for the route was not found
+     * @throws RouteNotFoundException Lorsque la $route n'a pas été trouvé
+     * @throws CallbackNotFound Lorsque le rappel($callback) pour la $route n'a pas été trouvé
      */
     public function handle() : void {
+
         $path = $this->get_path();
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
@@ -261,11 +264,12 @@ class Router
         }
 
         $this->currentRoute = NULL;
+
         call_user_func_array($callback, $callbackArguments);
     }
 
     /**
-     * Method used for getting a list of arguments for a route
+     * Méthode utilisée pour obtenir une liste d'arguments pour une route
      *
      * @param array $route
      * @param string $path
@@ -305,11 +309,11 @@ class Router
     }
 
     /**
-     * Method used to set up callback properties for routes
+     * Méthode utilisée pour configurer les propriétés $callback pour les routes
      *
      * @param Closure|string|array $callback Callback data of a route
      *
-     * @return mixed Return data needed to execute callback
+     * @return mixed Renvoie les données nécessaires pour exécuter le rappel($callback)
      */
     private function setup_callback(Closure|string|array $callback) : mixed {
         if ( ( is_string($callback) && class_exists($callback) ) || is_array($callback) ) {
@@ -343,7 +347,7 @@ class Router
     }
 
     /**
-     * Method which returns the current path the user is trying to access
+     * Méthode qui renvoie le chemin actuel auquel l'utilisateur tente d'accéder
      *
      * @return string Returns the current path
      */
@@ -356,11 +360,11 @@ class Router
     }
 
     /**
-     * Method which executes each specified middleware before the route's callback is executed
+     * Méthode qui exécute chaque middleware spécifié avant l'exécution du rappel de la route
      *
-     * @param array $data List of middlewares to be executed before accessing the endpoint
+     * @param array $data Liste des middlewares à exécuter avant d'accéder au point final
      *
-     * @throws CallbackNotFound When the specified middleware method is not found
+     * @throws CallbackNotFound Lorsque la méthode middleware spécifiée est introuvable
      */
     private function execute_middleware(array $data) : void {
         $namedArguments = match ( is_null($this->currentRoute) ) {
@@ -404,11 +408,11 @@ class Router
     }
 
     /**
-     * Private method used to fetch the arguments of the route's callback methods
+     * Méthode privée utilisée pour récupérer les arguments des méthodes de rappel de la route
      *
      * @param object|array|string $function
      *
-     * @return array|null Returns a list of arguments for a method or null on error
+     * @return array|null Renvoie une liste d'arguments pour une méthode ou null en cas d'erreur
      */
     private function get_all_arguments(object|array|string $function) : array|null {
         $function_get_args = [];
@@ -451,21 +455,21 @@ class Router
     }
 
     /**
-     * Method used for fetching a list of all the created routes
+     * Méthode utilisée pour récupérer une liste de toutes les routes créées
      *
-     * @return array Return the list of defined routes
+     * @return array Renvoie la liste des routes définies
      */
     public function get_routes() : array {
         return $this->routes;
     }
 
     /**
-     * Wrapper method used for adding new GET routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes GET
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function get(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::GET ]);
@@ -473,12 +477,12 @@ class Router
     }
 
     /**
-     * Wrapper method used for adding new POST routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes POST
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function post(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::POST ]);
@@ -486,12 +490,12 @@ class Router
     }
 
     /**
-     * Wrapper method used for adding new PUT routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes PUT
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function put(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::PUT ]);
@@ -499,12 +503,12 @@ class Router
     }
 
     /**
-     * Wrapper method used for adding new PATCH routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes PATCH
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function patch(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::PATCH ]);
@@ -512,12 +516,12 @@ class Router
     }
 
     /**
-     * Wrapper method used for adding new DELETE routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes DELETE
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function delete(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::DELETE ]);
@@ -525,12 +529,12 @@ class Router
     }
 
     /**
-     * Wrapper method used for adding new OPTIONS routes
+     * Méthode Wrapper utilisée pour ajouter de nouvelles routes OPTIONS
      *
      * @param string $path Path for the route
-     * @param callable|array|string|null $callback Callback method, an anonymous function or a class and method name to be executed
+     * @param callable|array|string|null $callback $callback, une fonction anonyme ou un nom de classe et de méthode à exécuter
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function options(string $path, callable|array|string|null $callback = NULL) : self {
         $this->route($path, $callback, [ self::OPTIONS ]);
@@ -538,11 +542,11 @@ class Router
     }
 
     /**
-     * Method used to set the prefix for routes
+     * Méthode utilisée pour définir le préfixe des itinéraires
      *
-     * @param string $prefix Prefix to be added to all the routes in the chain.
+     * @param string $prefix Préfixe à ajouter à toutes les routes de la chaîne.
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function prefix(string $prefix = '') : self {
         $this->prefix .= $prefix;
@@ -550,11 +554,11 @@ class Router
     }
 
     /**
-     * Method used to set the middlewares for routes
+     * Méthode utilisée pour définir les middlewares pour les routes
      *
-     * @param array $data List of middlewares to be executed before the routes
+     * @param array $data Liste des middlewares à exécuter avant les routes
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function middleware(array $data) : self {
         $this->middlewares = array_merge($this->middlewares, $data);
@@ -562,11 +566,11 @@ class Router
     }
 
     /**
-     * Method used to append more routes to the main route handler
+     * Méthode utilisée pour ajouter plus de routes au gestionnaire de route principal
      *
-     * @param array $routes List of routes from other route classes
+     * @param array $routes Liste des $routes d'autres classes des $routes
      *
-     * @return Router Returns an instance of itself so that other methods could be chained onto it
+     * @return Router Renvoie une instance de lui-même afin que d'autres méthodes puissent y être enchaînées
      */
     public function append(array $routes) : self {
         $this->routes = array_merge_recursive($routes, $this->routes);
