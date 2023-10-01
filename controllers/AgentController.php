@@ -18,11 +18,12 @@ class AgentController
 
     public function create(Request $request):void{
         $data = $request->getAll();
+        $header = $request->headers(key: 'Authorization');
         try {
             Response::
             withHeader("Content-Type", "application/json")::
             withStatus(200, 'OK')::
-            withBody(["datas" => $data])::
+            withBody(["datas" => $data, "headers"=>$header])::
             send();
         } catch (JsonException $e) {
         }

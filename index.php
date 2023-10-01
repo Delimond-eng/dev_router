@@ -22,6 +22,8 @@ $router
     ->post('/', [HomeController::class, 'index'])
     ->get('/view', [HomeController::class, 'view'])
     ->save();
+
+
 $router->prefix('/agents')
         ->get('/all', [AgentController::class, 'all'])
         ->post('/create', [AgentController::class, 'create'])
