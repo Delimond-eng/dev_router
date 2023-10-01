@@ -17,8 +17,6 @@ define("DEFAULT_VALIDATION_ERRORS", [
 class Validator
 {
 
-
-
     /**
      * Validate
      * @param array $data

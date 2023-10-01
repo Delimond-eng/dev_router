@@ -23,6 +23,8 @@ class Request
         } else {
             $rawInput = file_get_contents('php://input');
 
+
+
             $input = json_decode($rawInput) ?? [];
             if ( is_array($input) && count($input) == 0 ) {
                 mb_parse_str($rawInput, $input);
@@ -34,40 +36,49 @@ class Request
     }
 
     /**
-     * Returns a value for a specified body argument
+     * Renvoie une valeur pour un argument de corps spécifié
      *
-     * @param string $key Which request body argument to be returned
+     * @param string $key Quel argument du corps de la requête doit être renvoyé
      *
-     * @return mixed Body argument value or NULL if the argument doesn't exist
+     * @return mixed Valeur de l'argument du corps ou NULL si l'argument n'existe pas
      */
     public function get(string $key = '') : mixed {
         return $this->data[$key] ?? NULL;
     }
 
     /**
-     * Returns list of all the header items or a value of a specified key.
-     * It will return NULL if the specified key can't be found.
+     * Renvoie tous les arguments de corps spécifiés
+     * @return array|null
+     */
+    public function getAll(): ?array
+    {
+        return $this->data ?? null;
+    }
+
+    /**
+     * Renvoie la liste de tous les éléments d'en-tête ou une valeur d'une clé spécifiée.
+     * Il renverra NULL si la clé spécifiée est introuvable.
      *
-     * @param string $key Name of a specific item in the header list to return the value for
+     * @param string $key Nom d'un élément spécifique dans la liste d'en-tête pour lequel renvoyer la valeur
      *
-     * @return array|string|null List of header values or a value of a single item
+     * @return array|string|null Liste de valeurs d'en-tête ou valeur d'un seul élément.
      */
     public function headers(string $key = '') : array|string|null {
         $headers = $this->get_request_headers();
         return empty($key) ? $headers : array_filter($headers, function ($k) use ($key
         ) {
             /**
-             * This is to make sure we can get a match on a key as it's not guaranteed that keys will
-             * always be in uppercase/lowercase format as some clients/sdks don't respect that specification.
+             * Ceci afin de nous assurer que nous pouvons obtenir une correspondance sur une clé, car il n'est pas garanti que les clés le seront.
+             * Soyez toujours au format majuscules/minuscules car certains clients/sdks ne respectent pas cette spécification.
              */
             return strtolower($k) === strtolower($key);
         }, ARRAY_FILTER_USE_KEY) ?? NULL;
     }
 
     /**
-     * Method used for getting all request headers
+     * Méthode utilisée pour obtenir tous les en-têtes de requête.
      *
-     * @return array It will return an array containing all the header values or an empty array
+     * @return array Il renverra un tableau contenant toutes les valeurs d'en-tête ou un tableau vide
      */
     private function get_request_headers() : array {
         if ( function_exists("apache_request_headers") ) {
@@ -87,14 +98,12 @@ class Request
     }
 
     /**
-     * Sets the header status code for the response
+     * Définit le code d'état d'en-tête pour la réponse
      *
-     * @param int $statusCode Status code to be set for the response
-     * @param string $message Message to be sent int the header alongside the status code
+     * @param int $statusCode Code d'état à définir pour la réponse
+     * @param string $message Message à envoyer dans l'en-tête à côté du code d'état
      *
-     * @return Request Returns an instance of the Request class so that it can be chained on
-     * @deprecated Soon this option will be removed and should be replaced with a call to the Response class
-     * New way of using the Response class: Response::withStatus(401, 'Not Authorized');
+     * @return Request Renvoie une instance de la classe Request afin qu'elle puisse être chaînée sur
      *
      */
     public function status(int $statusCode = 200, string $message = '') : self {
@@ -103,15 +112,13 @@ class Request
     }
 
     /**
-     * Method used for setting custom header properties
+     * Méthode utilisée pour définir les propriétés d'en-tête personnalisées
      *
-     * @deprecated Soon this option will be removed and should be replaced with a call to the Response class
-     * New way of using the Response class: Response::withHeader('header-key', 'header-value');
      *
      * @param string|array|object $key Header key value
      * @param mixed $value Header value
      *
-     * @return Request Returns an instance of the Request class so that it can be chained on
+     * @return Request Renvoie une instance de la classe Request afin qu'elle puisse être chaînée sur
      *
      */
     public function header(string|array|object $key, mixed $value = NULL) : self {
@@ -128,12 +135,8 @@ class Request
 
     /**
      * Send response back
-     *
-     * @deprecated Soon this option will be removed and should be replaced with a call to the Response class
-     * New way of using the Response class: Response::status(200, 'OK')::setBody($output);
-     *
-     * @param string|array|object $output Value to be outputted as part of the response
-     * @param array|object|null $headers Optional list of custom header properties to be sent with the response
+     * @param string|array|object $output Valeur à afficher dans le cadre de la réponse
+     * @param array|object|null $headers Liste facultative de propriétés d'en-tête personnalisées à envoyer avec la réponse
      */
     public function send(string|array|object $output, array|object|null $headers = NULL) : void {
         if ( !is_null($headers) ) {
@@ -143,9 +146,9 @@ class Request
     }
 
     /**
-     * Private method used for parsing request body data for PUT and PATCH requests
+     * Méthode privée utilisée pour analyser les données du corps de la requête pour les requêtes PUT et PATCH
      *
-     * @return array Return an array of request body data
+     * @return array Renvoie un tableau de données du corps de la requête
      */
     private function parse_patch_and_put_request_data() : array {
 

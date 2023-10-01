@@ -243,12 +243,12 @@ class Router
 
         $callbackArguments = [];
         foreach ( $parameters as $name => $type ) {
-            if (strtolower($type) === strtolower('Gac\Routing\Request')) {
+            if (strtolower($type) === strtolower('Rtgroup\DevRouter\Core\Request')) {
                 $callbackArguments[$name] = $this->request;
                 continue;
             }
 
-            if (strtolower($type) === strtolower('Gac\Routing\Response')) {
+            if (strtolower($type) === strtolower('Rtgroup\DevRouter\Core\Response')) {
                 $callbackArguments[$name] = $this->response;
                 continue;
             }
